@@ -637,19 +637,27 @@ class ThingsBoardSized {
     }
 
     inline bool attributesRequestTopic(const char *json) {
-      return m_client.publish("v1/devices/me/attributes/request/2", json);
+      char topic[detectSize(ATTRIBUTE_REQUEST_TOPIC, m_requestId)];
+      snprintf_P(topic, sizeof(topic), ATTRIBUTE_REQUEST_TOPIC, m_requestId);
+      return m_client.publish(topic, json, m_qos ? 1 : 0);
+      // return m_client.publish("v1/devices/me/attributes/request/2", json, m_qos ? 1 : 0);
     }
 
     inline bool subscribeAttributesResponseTopic() {
-      return m_client.subscribe("v1/devices/me/attributes/response/+");    
+      return m_client.subscribe("v1/devices/me/attributes/response/+");
     }
 
     #if defined(ESP8266) || defined(ESP32)
-    inline bool callback(MQTT_CALLBACK_SIGNATURE){
-      Serial.println(F("Set callback"));    
+    inline void callback(MQTT_CALLBACK_SIGNATURE){
+      USBSerial.println(F("Set callback"));    
       m_client.setCallback(callback);
     }
     #endif
+
+    inline bool subscribeRPC()
+    {
+      return m_client.subscribe("v1/devices/me/rpc/request/+");
+    }
 
     //----------------------------------------------------------------------------
     // Telemetry API

@@ -11,6 +11,8 @@
 #endif // THINGSBOARD_ENABLE_PROGMEM
 #include <HardwareSerial.h>
 
+#define Serial USBSerial
+
 void ThingsBoardDefaultLogger::log(const char *msg) {
 #if THINGSBOARD_ENABLE_PROGMEM
   Serial.print(F("[TB] "));
